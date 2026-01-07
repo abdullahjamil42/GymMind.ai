@@ -1,0 +1,535 @@
+
+i will deploy this app after completion so keep that in mind through out until end
+last product should be deploy ready
+# AI Gym Coach – Complete MVP Specification (Including AI Models)
+
+This document defines the **full MVP scope** of an AI-powered gym web application, including **page-by-page functionality**, **AI model sources**, **what is built vs integrated**, and **how AI is orchestrated**. This is written to be directly consumable by **GitHub Copilot / Cursor / IDE agents**.
+
+---
+
+## 0. Global Architecture & AI Philosophy
+
+### Core Principle
+
+* The MVP **does not train large models**
+* The product **integrates pre-trained AI models + rule-based logic**
+* Focus is on **AI orchestration, reasoning, and personalization**
+
+### AI Stack Overview
+
+| Feature             | AI Source           | Built By Us       |
+| ------------------- | ------------------- | ----------------- |
+| Workout plans       | LLM API             | Prompt + logic    |
+| Chatbot             | LLM API             | Context injection |
+| Routine analysis    | LLM API             | Fitness rules     |
+| Form detection      | MediaPipe / MoveNet | Error rules       |
+| Calories            | LLM + Food DB       | Estimation logic  |
+| Progress prediction | Rules / regression  | Math logic        |
+
+---
+
+## 1. Landing Page (`/`)
+
+### Purpose
+
+Introduce the product and convert visitors into users.
+
+### Functional Behavior
+
+* Static marketing page
+* No AI calls
+* CTA routes to authentication
+
+### Components
+
+* HeroSection
+* FeatureCards
+* HowItWorks
+* CTAButtons
+* Footer
+
+---
+
+## 2. Authentication (`/login`, `/signup`)
+
+### Purpose
+
+Secure user identity and initialize AI personalization.
+
+### Behavior
+
+* Email/password authentication
+* Create user document in database
+* Redirect to onboarding
+
+---
+
+## 3. User Onboarding (`/onboarding`)
+
+### Purpose
+
+Collect **all inputs required by AI systems**.
+
+### Inputs
+
+* Age, gender, height, weight
+* Fitness goal
+* Experience level
+* Training location
+* Available days
+* Injury flags
+
+### Backend Logic
+
+* Calculate BMR and TDEE
+* Store profile for LLM context
+
+### AI Usage
+
+* No AI generation yet
+* Data used later in all prompts
+
+---
+
+## 4. Dashboard (`/dashboard`)
+
+### Purpose
+
+Single control center for all AI outputs.
+
+### Components
+
+* TodayWorkoutCard
+* CalorieStatusCard
+* ProgressSnapshot
+* ChatbotMiniWidget
+
+### AI Usage
+
+* LLM generates daily recommendation summary
+* Uses workout + nutrition history
+
+---
+
+## 5. AI Workout Plan Generator (`/workout-plan`)
+
+### Purpose
+
+Generate a **scientifically structured workout plan**.
+
+### AI Model
+
+* **LLM API (OpenAI / Gemini / Claude)**
+
+### Prompt Inputs
+
+* User profile
+* Goal
+* Experience
+* Available days
+* Injury data
+
+### Prompt Rules
+
+* Balanced muscle groups
+* Weekly volume limits
+* Progressive overload logic
+
+### Output
+
+Structured JSON workout plan with explanations.
+
+---
+
+## 6. Workout Session Page (`/workout/:day`)
+
+### Purpose
+
+Guide user during training.
+
+### Features
+
+* Exercise list
+* Rest timers
+* Instructions
+* Upload form video
+
+### AI Usage
+
+* LLM explains exercise intent
+* Data logged for future reasoning
+
+---
+
+## 7. AI Exercise Form Checker (`/form-check`)
+
+### Purpose
+
+Detect form mistakes using video analysis.
+
+### AI Model
+
+* **MediaPipe / MoveNet (pre-trained)**
+
+### Supported Exercises (MVP)
+
+* Squat
+* Push-up
+
+### Logic Built by Us
+
+* Extract joint keypoints
+* Calculate angles
+* Rule-based error detection
+
+### Output
+
+* Form score
+* Detected issues
+* Correction suggestions
+
+---
+
+## 8. AI Gym Chatbot (`/chat`)
+
+### Purpose
+
+24/7 personalized gym assistant.
+
+### AI Model
+
+* **LLM API**
+
+### Context Injected
+
+* User profile
+* Workout history
+* Calorie data
+
+### Constraints
+
+* No medical advice
+* Fitness-only scope
+
+---
+
+## 9. Calorie & Macro Tracker (`/nutrition`)
+
+### Purpose
+
+Simplify nutrition tracking using AI.
+
+### AI Models & Data
+
+* LLM for food parsing
+* USDA / Nutritionix for calorie data
+
+### Logic
+
+* Extract food entities
+* Estimate portions
+* Calculate calories & macros
+
+---
+
+## 10. Routine Analyzer (`/routine-analyzer`)
+
+### Purpose
+
+Optimize existing workout routines.
+
+### AI Model
+
+* LLM API
+
+### Prompt Logic
+
+* Analyze volume
+* Detect imbalance
+* Suggest optimized routine
+
+### Output
+
+* Improved routine
+* Explanation for changes
+
+---
+
+## 11. Progress Tracking (`/progress`)
+
+### Purpose
+
+Show measurable improvement.
+
+### AI Logic
+
+* Rule-based projections
+* Regression-style estimations
+
+### Data
+
+* Weight logs
+* Workout consistency
+* Strength estimates
+
+---
+
+## 12. Settings (`/settings`)
+
+### Purpose
+
+User control over AI personalization.
+
+### Features
+
+* Update profile
+* Change goals
+* Data deletion
+
+---
+
+## 13. Database Schema (Simplified)
+
+### Users Collection
+
+```json
+{
+  "id": "",
+  "profile": {},
+  "workouts": [],
+  "nutrition": [],
+  "videos": [],
+  "progress": []
+}
+```
+
+---
+
+## 14. MVP AI Model Sources (Explicit)
+
+### LLM
+
+* OpenAI / Gemini / Claude
+* Used via API only
+
+### Computer Vision
+
+* MediaPipe / MoveNet
+* No training required
+
+### Nutrition Data
+
+* USDA FoodData Central
+* Nutritionix
+
+### Prediction
+
+* Rule-based math
+* Optional regression later
+
+---
+
+## 15. Explicit MVP Limitations
+
+* No real-time video feedback
+* No wearables
+* No social features
+* No custom-trained large models
+
+---
+
+## 16. Optional Add-On (If Time Allows)
+
+### Small Trained Model
+
+* Input: Pose keypoints
+* Output: Correct / Incorrect form
+* Model: Simple CNN / classifier
+
+---
+
+## 17. How This Should Be Used With Copilot
+
+Prompt Copilot like this:
+
+> Generate frontend + backend code for section X using this specification.
+
+This MVP demonstrates **real-world AI product engineering**, not academic ML.
+
+---
+
+## 18. Development Phases & Execution Plan (Very Important)
+
+This section defines **clear phases** for building the MVP. Each phase is independently testable and can be shown to supervisors or evaluators as progress milestones.
+
+---
+
+### Phase 1: Planning & Architecture (Week 1)
+
+**Goals**
+
+* Finalize MVP scope
+* Lock tech stack
+* Prepare Copilot-ready specs
+
+**Tasks**
+
+* Review full MVP specification
+* Define frontend routes/pages
+* Define backend API endpoints
+* Set up GitHub repository
+* Configure environment variables for AI APIs
+
+**Deliverables**
+
+* Project repo initialized
+* Folder structure ready
+* Environment config documented
+
+---
+
+### Phase 2: Core App Skeleton (Week 2)
+
+**Goals**
+
+* Build non-AI foundation
+
+**Tasks**
+
+* Implement authentication (login/signup)
+* Create onboarding flow
+* Create dashboard UI
+* Set up MongoDB schemas
+
+**Deliverables**
+
+* User can sign up
+* Profile data stored
+* Dashboard loads without AI
+
+---
+
+### Phase 3: AI Workout Plan Generator (Week 3)
+
+**Goals**
+
+* First visible AI feature
+
+**Tasks**
+
+* Integrate LLM API
+* Write workout-plan prompt
+* Generate structured JSON plans
+* Render weekly plan UI
+
+**Deliverables**
+
+* Fully working AI workout planner
+* Regenerate + explain functionality
+
+---
+
+### Phase 4: AI Gym Chatbot (Week 4)
+
+**Goals**
+
+* Conversational AI experience
+
+**Tasks**
+
+* Build chatbot UI
+* Inject user context into prompts
+* Restrict responses to gym domain
+
+**Deliverables**
+
+* Chatbot answers personalized gym queries
+* Uses workout + profile data
+
+---
+
+### Phase 5: Calorie & Macro Tracker (Week 5)
+
+**Goals**
+
+* Add nutrition intelligence
+
+**Tasks**
+
+* Implement text-based meal logging
+* Integrate food database
+* Use LLM for food parsing
+
+**Deliverables**
+
+* Daily calorie tracking
+* Macro breakdown visible
+
+---
+
+### Phase 6: Exercise Form Checker (Week 6)
+
+**Goals**
+
+* Add computer vision feature
+
+**Tasks**
+
+* Integrate MediaPipe / MoveNet
+* Extract pose keypoints
+* Implement rule-based mistake detection
+
+**Deliverables**
+
+* Upload video
+* Get form feedback for squat/push-up
+
+---
+
+### Phase 7: Routine Analyzer & Progress Tracking (Week 7)
+
+**Goals**
+
+* Optimization + motivation features
+
+**Tasks**
+
+* Build routine analyzer page
+* Implement LLM-based routine evaluation
+* Add progress charts
+
+**Deliverables**
+
+* Users can optimize routines
+* Progress trends visible
+
+---
+
+### Phase 8: Polishing, Testing & Documentation (Week 8)
+
+**Goals**
+
+* Make project submission-ready
+
+**Tasks**
+
+* UI/UX polish
+* Error handling
+* Add loading states
+* Write README and documentation
+
+**Deliverables**
+
+* Stable MVP
+* Demo-ready application
+* Clear project documentation
+
+---
+
+## 19. How to Present These Phases (For FYP / Recruiters)
+
+You can state:
+
+> “The project was developed in phased iterations, starting with core system architecture, followed by AI feature integration, and concluding with computer vision-based form analysis and optimization modules.”
+
+This shows **engineering maturity** and **real-world development practice**.
