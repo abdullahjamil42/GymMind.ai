@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { urbanist } from '@/fonts/urbanist';
 import { Inter, Poppins } from 'next/font/google';
 import '@/styles/globals.css';
 import { AuthProvider } from '@/lib/auth/AuthProvider';
@@ -68,7 +69,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${poppins.variable} font-sans`}>
+      <body className={`${urbanist.variable} font-sans`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

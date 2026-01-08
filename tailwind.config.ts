@@ -84,8 +84,8 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        heading: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-urbanist)', 'Urbanist', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-urbanist)', 'Urbanist', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

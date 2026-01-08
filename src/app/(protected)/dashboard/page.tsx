@@ -3,8 +3,12 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useState } from 'react';
+import { Bot } from 'lucide-react';
+import ChatModal from './ChatModal';
 
 export default function DashboardPage() {
+    const [chatOpen, setChatOpen] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -20,11 +24,11 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-white relative">
       <img src="/bg.png" alt="Background Pattern" className="fixed inset-0 w-full h-full object-cover opacity-100 blur-sm pointer-events-none z-0 scale-110" />
       {/* Navigation Header */}
-      <nav className="bg-black/60 backdrop-blur-lg border-b border-black shadow-sm z-20 relative">
+      <header className="bg-black/60 sticky backdrop-blur-lg border-b border-black shadow-sm z-20  ">
         <div className="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4">
           <div className="flex items-center h-16 w-full">
             <div className="flex items-center flex-shrink-0">
-              <img src="/logo.png" alt="GymMind.ai Logo" className="h-16 mr-2 z-30 relative" />
+              {/*<img src="/logo1.png" alt="GymMind.ai Logo" className="h-16 mr-2 z-30 relative" />*/}
               <h1 className="text-2xl font-bold text-white z-30 relative ">
                 GymMind<span className="text-primary-600">.ai</span>
               </h1>
@@ -41,18 +45,18 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Slim Stats Bar Below Nav */}
-      <div className="w-full bg-white/60 backdrop-blur-md  z-20 relative flex items-center justify-center px-2 py-2 text-sm font-medium text-gray-700 space-x-6 whitespace-nowrap overflow-x-auto">
-        <span>Workouts This Week:  <span className="font-bold text-black">0</span> (+0 from last week)</span>
+      <div className="w-full bg-red-950 bg-opacity-30    z-20 relative flex items-center justify-center px-2 py-2 text-sm font-medium text-white/80 space-x-6 whitespace-nowrap overflow-x-auto">
+        <span>Workouts This Week:  <span className="font-bold text-black  ">0</span> (+0 from last week)</span>
         <span className="mx-2">|</span>
         <span>Current Streak: <span className="font-bold text-black">0 days</span> (Keep it going!)</span>
         <span className="mx-2">|</span>
         <span>Calories Burned: <span className="font-bold text-black">0</span> (This week)</span>
         <span className="mx-2">|</span>
         <span>Total Workouts: <span className="font-bold text-black">0</span> (All time)</span>
-      </div>
+      </div> 
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto p-2 sm:px-3 lg:px-4 py-8 relative z-20">
@@ -115,19 +119,19 @@ export default function DashboardPage() {
         </div>
 
         {/* AI Coach Floating Button */}
-        <Link
-          href="/ai-coach"
+        <button
+          onClick={() => setChatOpen(true)}
           className="fixed bottom-8 right-8 z-50 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg p-5 flex items-center justify-center transition"
           title="AI Coach"
         >
           <span className="sr-only">AI Coach</span>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a7 7 0 017 7v2a7 7 0 01-7 7 7 7 0 01-7-7V9a7 7 0 017-7zm0 0v2m0 16v2m-7-7h2m10 0h2" />
-          </svg>
-        </Link>
+          <Bot className="w-8 h-8" />
+        </button>
+
+        {chatOpen && <ChatModal onClose={() => setChatOpen(false)} />}
 
         {/* Recent Activity */}
-        <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm bg-opacity-70 hover:opacity-60 ">
           <h3 className="text-2xl font-bold text-black mb-6">Recent Activity</h3>
           <div className="text-center py-12">
             <p className="text-gray-600 mb-4">No workouts yet</p>
