@@ -108,8 +108,10 @@ export interface IWorkoutPlan extends Document {
   endDate: Date;
   weekNumber: number;
   goal?: string;
+  weeklyPlan: unknown[];
   days: unknown[];
   aiExplanation?: string;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -141,8 +143,8 @@ const WorkoutDaySchema = new Schema({
 const WorkoutPlanSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true },
+    startDate: { type: Date, default: Date.now },
+    endDate: Date,
     weekNumber: { type: Number, default: 1 },
     goal: {
       type: String,
@@ -155,8 +157,10 @@ const WorkoutPlanSchema = new Schema(
         'general-health',
       ],
     },
-    days: [WorkoutDaySchema],
+    weeklyPlan: [WorkoutDaySchema],
+    days: [WorkoutDaySchema], // Keep for backward compatibility
     aiExplanation: String,
+    isActive: { type: Boolean, default: true },
   },
   {
     timestamps: true,

@@ -38,9 +38,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full">
+    <div className="relative min-h-screen flex items-center justify-center bg-gray-50 px-4 overflow-hidden">
+      {/* Blurred background image */}
+      <div className="absolute inset-0 z-0 bg-[url('/bg.png')] bg-cover bg-center bg-no-repeat blur-sm scale-105" aria-hidden="true" />
+      {/* Shadow overlay for readability */}
+      <div className="absolute inset-0 z-0 bg-black/40" aria-hidden="true" />
+      <div className="max-w-md w-full relative z-10">
         {/* Logo/Header */}
+          
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-black mb-2">
             GymMind<span className="text-primary-600">.ai</span>

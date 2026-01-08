@@ -36,8 +36,8 @@ export interface LLMResponse {
 // ==========================================
 
 export const DEFAULT_LLM_CONFIG: LLMConfig = {
-  provider: (process.env.DEFAULT_LLM_PROVIDER as LLMProvider) || 'openai',
-  model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
+  provider: (process.env.LLM_PROVIDER as LLMProvider) || 'gemini',
+  model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
   maxTokens: 2048,
   temperature: 0.7,
 };
@@ -68,10 +68,10 @@ let geminiClient: GoogleGenerativeAI | null = null;
 
 export function getGeminiClient(): GoogleGenerativeAI {
   if (!geminiClient) {
-    if (!process.env.GOOGLE_GEMINI_API_KEY) {
-      throw new Error('GOOGLE_GEMINI_API_KEY is not configured');
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is not configured');
     }
-    geminiClient = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY);
+    geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   }
   return geminiClient;
 }
@@ -136,7 +136,7 @@ async function generateGeminiResponse(
 ): Promise<LLMResponse> {
   const client = getGeminiClient();
   const model = client.getGenerativeModel({
-    model: process.env.GOOGLE_GEMINI_MODEL || 'gemini-1.5-pro',
+    model: process.env.GOOGLE_GEMINI_MODEL || 'gemini-pro',
   });
 
   // Convert messages to Gemini format
