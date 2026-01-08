@@ -10,28 +10,28 @@ export default function DashboardPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark-950">
-        <div className="text-white">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-black">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950">
+    <div className="min-h-screen bg-white">
       {/* Navigation Header */}
-      <nav className="bg-dark-900/80 backdrop-blur-lg border-b border-dark-800">
+      <nav className="bg-white backdrop-blur-lg border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-white">
-                GymMind<span className="text-primary-500">.ai</span>
+              <h1 className="text-2xl font-bold text-black">
+                GymMind<span className="text-primary-600">.ai</span>
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-dark-300">{session?.user?.name}</span>
+              <span className="text-gray-700">{session?.user?.name}</span>
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
-                className="px-4 py-2 bg-dark-800 hover:bg-dark-700 text-white rounded-lg transition"
+                className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition"
               >
                 Sign Out
               </button>
@@ -44,50 +44,50 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Welcome Section */}
         <div className="mb-12">
-          <h2 className="text-4xl font-bold text-white mb-2">
+          <h2 className="text-4xl font-bold text-black mb-2">
             Welcome back, {session?.user?.name?.split(' ')[0] || 'there'}! 👋
           </h2>
-          <p className="text-dark-400 text-lg">
+          <p className="text-gray-600 text-lg">
             Ready to crush your fitness goals today?
           </p>
         </div>
 
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-dark-900 border border-dark-800 rounded-xl p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-dark-400 text-sm">Workouts This Week</span>
+              <span className="text-gray-600 text-sm">Workouts This Week</span>
               <span className="text-2xl">💪</span>
             </div>
-            <p className="text-3xl font-bold text-white">0</p>
-            <p className="text-dark-500 text-sm mt-1">+0 from last week</p>
+            <p className="text-3xl font-bold text-black">0</p>
+            <p className="text-gray-400 text-sm mt-1">+0 from last week</p>
           </div>
 
-          <div className="bg-dark-900 border border-dark-800 rounded-xl p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-dark-400 text-sm">Current Streak</span>
+              <span className="text-gray-600 text-sm">Current Streak</span>
               <span className="text-2xl">🔥</span>
             </div>
-            <p className="text-3xl font-bold text-white">0 days</p>
-            <p className="text-dark-500 text-sm mt-1">Keep it going!</p>
+            <p className="text-3xl font-bold text-black">0 days</p>
+            <p className="text-gray-400 text-sm mt-1">Keep it going!</p>
           </div>
 
-          <div className="bg-dark-900 border border-dark-800 rounded-xl p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-dark-400 text-sm">Calories Burned</span>
+              <span className="text-gray-600 text-sm">Calories Burned</span>
               <span className="text-2xl">🔥</span>
             </div>
-            <p className="text-3xl font-bold text-white">0</p>
-            <p className="text-dark-500 text-sm mt-1">This week</p>
+            <p className="text-3xl font-bold text-black">0</p>
+            <p className="text-gray-400 text-sm mt-1">This week</p>
           </div>
 
-          <div className="bg-dark-900 border border-dark-800 rounded-xl p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-dark-400 text-sm">Total Workouts</span>
+              <span className="text-gray-600 text-sm">Total Workouts</span>
               <span className="text-2xl">📊</span>
             </div>
-            <p className="text-3xl font-bold text-white">0</p>
-            <p className="text-dark-500 text-sm mt-1">All time</p>
+            <p className="text-3xl font-bold text-black">0</p>
+            <p className="text-gray-400 text-sm mt-1">All time</p>
           </div>
         </div>
 
@@ -99,60 +99,60 @@ export default function DashboardPage() {
           >
             <div className="text-4xl mb-4">🏋️</div>
             <h3 className="text-xl font-bold text-white mb-2">Start Workout</h3>
-            <p className="text-primary-100">Begin your training session</p>
+            <p className="text-red-100">Begin your training session</p>
           </Link>
 
           <Link
             href="/workout-plan"
-            className="bg-dark-900 border border-dark-800 rounded-xl p-8 hover:border-primary-500/50 transition group"
+            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
           >
             <div className="text-4xl mb-4">📋</div>
-            <h3 className="text-xl font-bold text-white mb-2">View Plan</h3>
-            <p className="text-dark-400">Check your workout schedule</p>
+            <h3 className="text-xl font-bold text-black mb-2">View Plan</h3>
+            <p className="text-gray-600">Check your workout schedule</p>
           </Link>
 
           <Link
             href="/progress"
-            className="bg-dark-900 border border-dark-800 rounded-xl p-8 hover:border-primary-500/50 transition group"
+            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
           >
             <div className="text-4xl mb-4">📈</div>
-            <h3 className="text-xl font-bold text-white mb-2">Progress</h3>
-            <p className="text-dark-400">Track your improvements</p>
+            <h3 className="text-xl font-bold text-black mb-2">Progress</h3>
+            <p className="text-gray-600">Track your improvements</p>
           </Link>
 
           <Link
             href="/nutrition"
-            className="bg-dark-900 border border-dark-800 rounded-xl p-8 hover:border-primary-500/50 transition group"
+            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
           >
             <div className="text-4xl mb-4">🥗</div>
-            <h3 className="text-xl font-bold text-white mb-2">Nutrition</h3>
-            <p className="text-dark-400">Log meals and track macros</p>
+            <h3 className="text-xl font-bold text-black mb-2">Nutrition</h3>
+            <p className="text-gray-600">Log meals and track macros</p>
           </Link>
 
           <Link
             href="/form-analysis"
-            className="bg-dark-900 border border-dark-800 rounded-xl p-8 hover:border-primary-500/50 transition group"
+            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
           >
             <div className="text-4xl mb-4">📹</div>
-            <h3 className="text-xl font-bold text-white mb-2">Form Check</h3>
-            <p className="text-dark-400">AI-powered exercise analysis</p>
+            <h3 className="text-xl font-bold text-black mb-2">Form Check</h3>
+            <p className="text-gray-600">AI-powered exercise analysis</p>
           </Link>
 
           <Link
             href="/ai-coach"
-            className="bg-dark-900 border border-dark-800 rounded-xl p-8 hover:border-primary-500/50 transition group"
+            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
           >
             <div className="text-4xl mb-4">🤖</div>
-            <h3 className="text-xl font-bold text-white mb-2">AI Coach</h3>
-            <p className="text-dark-400">Chat with your AI trainer</p>
+            <h3 className="text-xl font-bold text-black mb-2">AI Coach</h3>
+            <p className="text-gray-600">Chat with your AI trainer</p>
           </Link>
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-dark-900 border border-dark-800 rounded-xl p-8">
-          <h3 className="text-2xl font-bold text-white mb-6">Recent Activity</h3>
+        <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
+          <h3 className="text-2xl font-bold text-black mb-6">Recent Activity</h3>
           <div className="text-center py-12">
-            <p className="text-dark-400 mb-4">No workouts yet</p>
+            <p className="text-gray-600 mb-4">No workouts yet</p>
             <Link
               href="/workout-plan"
               className="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition"

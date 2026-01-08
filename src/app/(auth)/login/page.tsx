@@ -38,29 +38,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            GymMind<span className="text-primary-500">.ai</span>
+          <h1 className="text-4xl font-bold text-black mb-2">
+            GymMind<span className="text-primary-600">.ai</span>
           </h1>
-          <p className="text-dark-400">Your AI-Powered Gym Coach</p>
+          <p className="text-gray-600">Your AI-Powered Gym Coach</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-dark-900 rounded-2xl shadow-2xl p-8 border border-dark-800">
-          <h2 className="text-2xl font-bold text-white mb-6">Welcome Back</h2>
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+          <h2 className="text-2xl font-bold text-black mb-6">Welcome Back</h2>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg mb-6">
+            <div className="bg-red-50 border border-red-500 text-red-700 px-4 py-3 rounded-lg mb-6">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-dark-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <input
@@ -69,13 +69,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg text-white placeholder-dark-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
                 placeholder="your@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-dark-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
               </label>
               <input
@@ -84,7 +84,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg text-white placeholder-dark-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
                 placeholder="••••••••"
               />
             </div>
@@ -99,16 +99,16 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-dark-400">
+            <p className="text-gray-600">
               Don't have an account?{' '}
-              <Link href="/signup" className="text-primary-500 hover:text-primary-400 font-medium">
+              <Link href="/signup" className="text-primary-600 hover:text-primary-700 font-medium">
                 Sign up
               </Link>
             </p>
           </div>
         </div>
 
-        <p className="text-center text-dark-500 text-sm mt-8">
+        <p className="text-center text-gray-500 text-sm mt-8">
           By signing in, you agree to our Terms of Service and Privacy Policy
         </p>
       </div>

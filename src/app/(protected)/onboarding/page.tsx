@@ -87,15 +87,15 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950 px-4 py-12">
+    <div className="min-h-screen bg-gray-50 px-4 py-12">
       <div className="max-w-2xl mx-auto">
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-dark-400">Step {step} of 4</span>
-            <span className="text-sm text-dark-400">{Math.round((step / 4) * 100)}%</span>
+            <span className="text-sm text-gray-600">Step {step} of 4</span>
+            <span className="text-sm text-gray-600">{Math.round((step / 4) * 100)}%</span>
           </div>
-          <div className="h-2 bg-dark-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-primary-600 transition-all duration-300"
               style={{ width: `${(step / 4) * 100}%` }}
@@ -104,12 +104,12 @@ export default function OnboardingPage() {
         </div>
 
         {/* Content Card */}
-        <div className="bg-dark-900 rounded-2xl shadow-2xl p-8 border border-dark-800">
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome to GymMind.ai!</h1>
-          <p className="text-dark-400 mb-8">Let's personalize your fitness journey</p>
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+          <h1 className="text-3xl font-bold text-black mb-2">Welcome to GymMind.ai!</h1>
+          <p className="text-gray-600 mb-8">Let's personalize your fitness journey</p>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg mb-6">
+            <div className="bg-red-50 border border-red-500 text-red-700 px-4 py-3 rounded-lg mb-6">
               {error}
             </div>
           )}
@@ -117,26 +117,26 @@ export default function OnboardingPage() {
           {/* Step 1: Personal Info */}
           {step === 1 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-white mb-4">Personal Information</h2>
+              <h2 className="text-xl font-semibold text-black mb-4">Personal Information</h2>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-dark-300 mb-2">First Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                   <input
                     type="text"
                     value={formData.firstName}
                     onChange={(e) => updateField('firstName', e.target.value)}
-                    className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="John"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-dark-300 mb-2">Last Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                   <input
                     type="text"
                     value={formData.lastName}
                     onChange={(e) => updateField('lastName', e.target.value)}
-                    className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Doe"
                   />
                 </div>
