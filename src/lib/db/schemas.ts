@@ -12,6 +12,8 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
 export interface IUser extends Document {
   email: string;
+  password: string;
+  name: string;
   isOnboardingComplete: boolean;
   firstName?: string;
   lastName?: string;
@@ -39,6 +41,14 @@ const UserSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
     },
     isOnboardingComplete: {
       type: Boolean,

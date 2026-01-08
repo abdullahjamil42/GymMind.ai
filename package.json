@@ -1,8 +1,8 @@
 {
   "name": "gymmind-ai",
   "version": "1.0.0",
-  "description": "AI-powered gym coaching web application",
   "private": true,
+  "description": "AI-powered gym coaching web application",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -41,8 +41,5 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.3"
-  },
-  "engines": {
-    "node": ">=18.17.0"
   }
 }
