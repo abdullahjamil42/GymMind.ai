@@ -17,21 +17,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative">
+      <img src="/bg.png" alt="Background Pattern" className="fixed inset-0 w-full h-full object-cover opacity-100 blur-sm pointer-events-none z-0 scale-110" />
       {/* Navigation Header */}
-      <nav className="bg-white backdrop-blur-lg border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-black">
+      <nav className="bg-black/60 backdrop-blur-lg border-b border-black shadow-sm z-20 relative">
+        <div className="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4">
+          <div className="flex items-center h-16 w-full">
+            <div className="flex items-center flex-shrink-0">
+              <img src="/logo.png" alt="GymMind.ai Logo" className="h-16 mr-2 z-30 relative" />
+              <h1 className="text-2xl font-bold text-white z-30 relative ">
                 GymMind<span className="text-primary-600">.ai</span>
               </h1>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700">{session?.user?.name}</span>
+            <div className="flex-1" />
+            <div className="flex items-center space-x-4 z-30 relative">
+              <span className="text-gray-200">{session?.user?.name}</span>
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
-                className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition"
+                className="px-4 py-2  hover:bg-gray-800 text-white rounded-lg transition"
               >
                 Sign Out
               </button>
@@ -40,113 +43,88 @@ export default function DashboardPage() {
         </div>
       </nav>
 
+      {/* Slim Stats Bar Below Nav */}
+      <div className="w-full bg-white/60 backdrop-blur-md  z-20 relative flex items-center justify-center px-2 py-2 text-sm font-medium text-gray-700 space-x-6 whitespace-nowrap overflow-x-auto">
+        <span>Workouts This Week:  <span className="font-bold text-black">0</span> (+0 from last week)</span>
+        <span className="mx-2">|</span>
+        <span>Current Streak: <span className="font-bold text-black">0 days</span> (Keep it going!)</span>
+        <span className="mx-2">|</span>
+        <span>Calories Burned: <span className="font-bold text-black">0</span> (This week)</span>
+        <span className="mx-2">|</span>
+        <span>Total Workouts: <span className="font-bold text-black">0</span> (All time)</span>
+      </div>
+
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto p-2 sm:px-3 lg:px-4 py-8 relative z-20">
         {/* Welcome Section */}
         <div className="mb-12">
-          <h2 className="text-4xl font-bold text-black mb-2">
-            Welcome back, {session?.user?.name?.split(' ')[0] || 'there'}! 👋
+          <h2 className="text-4xl font-bold text-white mb-2">
+            Welcome back, {session?.user?.name?.split(' ')[0] || 'there'}!
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-400 text-lg">
             Ready to crush your fitness goals today?
           </p>
         </div>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Workouts This Week</span>
-              <span className="text-2xl">💪</span>
-            </div>
-            <p className="text-3xl font-bold text-black">0</p>
-            <p className="text-gray-400 text-sm mt-1">+0 from last week</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Current Streak</span>
-              <span className="text-2xl">🔥</span>
-            </div>
-            <p className="text-3xl font-bold text-black">0 days</p>
-            <p className="text-gray-400 text-sm mt-1">Keep it going!</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Calories Burned</span>
-              <span className="text-2xl">🔥</span>
-            </div>
-            <p className="text-3xl font-bold text-black">0</p>
-            <p className="text-gray-400 text-sm mt-1">This week</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Total Workouts</span>
-              <span className="text-2xl">📊</span>
-            </div>
-            <p className="text-3xl font-bold text-black">0</p>
-            <p className="text-gray-400 text-sm mt-1">All time</p>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {/* Quick Actions - Single Row, No AI Coach */}
+        <div className="flex flex-row gap-4 mb-12 w-full justify-between opacity-70">
           <Link
             href="/workout-plan"
-            className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl p-8 hover:shadow-lg hover:shadow-primary-500/20 transition group"
+            className="bg-white rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.35)] hover:ring-2 hover:ring-primary-400 hover:opacity-60"
           >
-            <div className="text-4xl mb-4">🏋️</div>
-            <h3 className="text-xl font-bold text-white mb-2">Start Workout</h3>
-            <p className="text-red-100">Begin your training session</p>
+            <img src="start.gif" alt="Start Workout" className="h-30  mb-2" />
+            <h3 className="text-base font-bold text-black mb-1">Start Workout</h3>
+            <p className="text-xs text-red-950">Begin your training session</p>
           </Link>
 
           <Link
             href="/workout-plan"
-            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
+            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
           >
-            <div className="text-4xl mb-4">📋</div>
-            <h3 className="text-xl font-bold text-black mb-2">View Plan</h3>
-            <p className="text-gray-600">Check your workout schedule</p>
+            <img src="plan.gif" alt="Start Workout" className="h-30  mb-2" />
+            <h3 className="text-base font-bold text-black mb-1">View Plan</h3>
+            <p className="text-xs text-gray-600">Check your workout schedule</p>
           </Link>
 
           <Link
             href="/progress"
-            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
+            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
           >
-            <div className="text-4xl mb-4">📈</div>
-            <h3 className="text-xl font-bold text-black mb-2">Progress</h3>
-            <p className="text-gray-600">Track your improvements</p>
+            <img src="progress.gif" alt="Start Workout" className="h-40  mb-2" />
+            <h3 className="text-base font-bold text-black mb-1">Progress</h3>
+            <p className="text-xs text-gray-600">Track your improvements</p>
           </Link>
 
           <Link
             href="/nutrition"
-            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
+            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
           >
-            <div className="text-4xl mb-4">🥗</div>
-            <h3 className="text-xl font-bold text-black mb-2">Nutrition</h3>
-            <p className="text-gray-600">Log meals and track macros</p>
+            <img src="nutrition.gif" alt="Start Workout" className="h-30  mb-2" />
+            <h3 className="text-base font-bold text-black mb-1">Nutrition</h3>
+            <p className="text-xs text-gray-600">Log meals and track macros</p>
           </Link>
 
           <Link
             href="/form-analysis"
-            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
+            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
           >
-            <div className="text-4xl mb-4">📹</div>
-            <h3 className="text-xl font-bold text-black mb-2">Form Check</h3>
-            <p className="text-gray-600">AI-powered exercise analysis</p>
-          </Link>
-
-          <Link
-            href="/ai-coach"
-            className="bg-white border border-gray-200 rounded-xl p-8 hover:border-primary-500 transition group shadow-sm"
-          >
-            <div className="text-4xl mb-4">🤖</div>
-            <h3 className="text-xl font-bold text-black mb-2">AI Coach</h3>
-            <p className="text-gray-600">Chat with your AI trainer</p>
+            <img src="formcheck.gif" alt="Start Workout" className="h-30  mb-2" />
+            <h3 className="text-base font-bold text-black mb-1">Form Check</h3>
+            <p className="text-xs text-gray-600">AI-powered exercise analysis</p>
           </Link>
         </div>
+
+        {/* AI Coach Floating Button */}
+        <Link
+          href="/ai-coach"
+          className="fixed bottom-8 right-8 z-50 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg p-5 flex items-center justify-center transition"
+          title="AI Coach"
+        >
+          <span className="sr-only">AI Coach</span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a7 7 0 017 7v2a7 7 0 01-7 7 7 7 0 01-7-7V9a7 7 0 017-7zm0 0v2m0 16v2m-7-7h2m10 0h2" />
+          </svg>
+        </Link>
 
         {/* Recent Activity */}
         <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">

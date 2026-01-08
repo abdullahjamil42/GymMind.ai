@@ -148,7 +148,7 @@ export default function WorkoutPlanPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-white z-30 relative">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading workout plan...</p>
@@ -158,24 +158,27 @@ export default function WorkoutPlanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative z-0">
+      <img src="/bg.png" alt="Background Pattern" className="fixed inset-0 w-full h-full object-cover opacity-100 blur-sm pointer-events-none z-0 scale-110" />
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+      <header className="bg-black/60 backdrop-blur-lg border-b border-black shadow-sm z-20 relative">
+
+        <div className="max-w-4xl mx-auto px-0 py-3 ">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-gray-600 hover:text-black transition">
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <Link href="/dashboard" className="text-gray-200 hover:text-black transition">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <div>
-                <h1 className="text-xl font-bold text-black">AI Workout Plan</h1>
-                <p className="text-sm text-gray-600">Your personalized training program</p>
+                <h1 className="text-xl font-bold text-white">AI Workout Plan</h1>
+                <p className="text-sm text-gray-200">Your personalized training program</p>
               </div>
             </div>
+            <div className="flex-1" />
             <button
               onClick={generateNewPlan}
               disabled={generating}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition disabled:opacity-50 flex-shrink-0"
             >
               {generating ? (
                 <>
@@ -193,16 +196,16 @@ export default function WorkoutPlanPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+        <main className="max-w-4xl mx-auto px-0 py-8 relative z-10">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 z-20 relative">
             {error}
           </div>
         )}
 
         {/* No Plan State */}
         {!workoutPlan && !generating && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center z-10 relative">
             <Sparkles className="h-16 w-16 text-primary-600 mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-black mb-4">Generate Your AI Workout Plan</h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
@@ -221,7 +224,7 @@ export default function WorkoutPlanPage() {
 
         {/* Generating State */}
         {generating && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center z-10 relative">
             <div className="relative mx-auto w-20 h-20 mb-6">
               <Loader2 className="h-20 w-20 animate-spin text-primary-600" />
               <Dumbbell className="h-8 w-8 text-primary-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
@@ -235,9 +238,9 @@ export default function WorkoutPlanPage() {
 
         {/* Workout Plan Display */}
         {workoutPlan && !generating && (
-          <div className="space-y-6">
+          <div className="space-y-6 z-10 relative">
             {/* Plan Overview */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 z-10 relative">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-bold text-black">Your Weekly Plan</h2>
@@ -255,13 +258,13 @@ export default function WorkoutPlanPage() {
               </div>
               
               {showExplanation && workoutPlan.explanation && (
-                <div className="bg-primary-50 border border-primary-100 rounded-lg p-4 mb-4">
+                <div className="bg-primary-50 border border-primary-100 rounded-lg p-4 mb-4 z-20 relative">
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">{workoutPlan.explanation}</p>
                 </div>
               )}
 
               {/* Weekly Overview Grid */}
-              <div className="grid grid-cols-7 gap-2">
+              <div className="grid grid-cols-7 gap-2 z-10 relative">
                 {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
                   const workoutDay = workoutPlan.weeklyPlan.find(d => d.day === day);
                   return (
@@ -286,7 +289,7 @@ export default function WorkoutPlanPage() {
 
             {/* Workout Days */}
             {workoutPlan.weeklyPlan.map((day) => (
-              <div key={day.day} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div key={day.day} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden z-10 relative">
                 <button
                   onClick={() => setExpandedDay(expandedDay === day.day ? null : day.day)}
                   className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition"
@@ -314,7 +317,7 @@ export default function WorkoutPlanPage() {
                 </button>
 
                 {expandedDay === day.day && (
-                  <div className="px-6 pb-6 border-t border-gray-100">
+                  <div className="px-6 pb-6 border-t border-gray-100 z-10 relative">
                     {/* Focus Areas */}
                     <div className="flex flex-wrap gap-2 py-4">
                       {day.focus.map((area) => (
@@ -332,7 +335,7 @@ export default function WorkoutPlanPage() {
                       {day.exercises.map((exercise, idx) => (
                         <div
                           key={idx}
-                          className="bg-gray-50 rounded-xl p-4"
+                          className="bg-gray-50 rounded-xl p-4 z-10 relative"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
@@ -370,7 +373,7 @@ export default function WorkoutPlanPage() {
         {/* Exercise Explanation Modal */}
         {(exerciseExplanation || loadingExplanation) && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden">
+            <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden z-50 relative">
               <div className="p-6 border-b border-gray-200 flex items-center justify-between">
                 <h3 className="text-lg font-bold text-black">
                   {loadingExplanation ? 'Loading...' : exerciseExplanation?.name}
