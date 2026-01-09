@@ -6,48 +6,89 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Bot } from 'lucide-react';
 import ChatModal from './ChatModal';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 export default function DashboardPage() {
   const [chatOpen, setChatOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [nutritionStats, setNutritionStats] = useState({
     todayCalories: 0,
     weeklyMeals: 0,
     calorieGoal: 2200
   });
+  const [progressStats, setProgressStats] = useState({
+    workoutsThisWeek: 0,
+    workoutsLastWeek: 0,
+    currentStreak: 0,
+    recentWorkouts: [] as Array<{ date: string; workoutName: string }>
+  });
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Fetch nutrition stats
+  // Fetch all stats
   useEffect(() => {
-    const fetchNutritionStats = async () => {
+    const fetchStats = async () => {
+      setLoading(true);
       try {
+        // Fetch nutrition stats
         const today = new Date().toISOString().split('T')[0];
-        const response = await fetch(`/api/nutrition?date=${today}`);
-        const data = await response.json();
+        const nutritionRes = await fetch(`/api/nutrition?date=${today}`);
+        const nutritionData = await nutritionRes.json();
         
-        if (data.success) {
+        if (nutritionData.success) {
           setNutritionStats(prev => ({
             ...prev,
-            todayCalories: data.dailyTotals?.calories || 0,
-            weeklyMeals: data.meals?.length || 0
+            todayCalories: nutritionData.dailyTotals?.calories || 0,
+            weeklyMeals: nutritionData.meals?.length || 0
           }));
         }
+
+        // Fetch progress stats (get last 30 days for recent activity)
+        const progressRes = await fetch('/api/progress?range=30');
+        const progressData = await progressRes.json();
+        
+        if (progressData.success) {
+          const workoutEntries = (progressData.entries || [])
+            .filter((e: any) => e.type === 'workout');
+          
+          // Calculate this week's workouts
+          const now = new Date();
+          const weekStart = new Date(now);
+          weekStart.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
+          weekStart.setHours(0, 0, 0, 0);
+          
+          const thisWeekWorkouts = workoutEntries.filter((e: any) => 
+            new Date(e.date) >= weekStart
+          );
+          
+          setProgressStats({
+            workoutsThisWeek: thisWeekWorkouts.length,
+            workoutsLastWeek: 0,
+            currentStreak: progressData.stats?.currentStreak || 0,
+            recentWorkouts: workoutEntries
+              .slice(0, 5)
+              .map((e: any) => ({
+                date: new Date(e.date).toLocaleDateString(),
+                workoutName: e.data?.workoutName || 'Workout'
+              }))
+          });
+        }
       } catch (err) {
-        console.error('Error fetching nutrition stats:', err);
+        console.error('Error fetching stats:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
     if (status === 'authenticated') {
-      fetchNutritionStats();
+      fetchStats();
+    } else if (status !== 'loading') {
+      setLoading(false);
     }
   }, [status]);
 
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-black">Loading...</div>
-      </div>
-    );
+  if (status === 'loading' || loading) {
+    return <LoadingSpinner fullScreen text="Loading dashboard..." />
   }
 
   return (
@@ -79,9 +120,9 @@ export default function DashboardPage() {
 
       {/* Slim Stats Bar Below Nav */}
       <div className="w-full bg-red-950 bg-opacity-30    z-20 relative flex items-center justify-center px-2 py-2 text-sm font-medium text-white/80 space-x-6 whitespace-nowrap overflow-x-auto">
-        <span>Workouts This Week:  <span className="font-bold text-black  ">0</span> (+0 from last week)</span>
+        <span>Workouts This Week:  <span className="font-bold text-black  ">{progressStats.workoutsThisWeek}</span> {progressStats.workoutsLastWeek > 0 && `(+${progressStats.workoutsThisWeek - progressStats.workoutsLastWeek} from last week)`}</span>
         <span className="mx-2">|</span>
-        <span>Current Streak: <span className="font-bold text-black">0 days</span> (Keep it going!)</span>
+        <span>Current Streak: <span className="font-bold text-black">{progressStats.currentStreak} days</span> {progressStats.currentStreak > 0 ? '🔥' : '(Start today!)'}</span>
         <span className="mx-2">|</span>
         <span>Calories Today: <span className="font-bold text-black">{nutritionStats.todayCalories}</span> of {nutritionStats.calorieGoal}</span>
         <span className="mx-2">|</span>
@@ -103,7 +144,7 @@ export default function DashboardPage() {
         {/* Quick Actions - Single Row, No AI Coach */}
         <div className="flex flex-row gap-4 mb-12 w-full justify-between opacity-70">
           <Link
-            href="/workout-plan"
+            href="/workout-session"
             className="bg-white rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.35)] hover:ring-2 hover:ring-primary-400 hover:opacity-60"
           >
             <img src="start.gif" alt="Start Workout" className="h-30  mb-2" />
@@ -139,12 +180,21 @@ export default function DashboardPage() {
           </Link>
 
           <Link
-            href="/form-analysis"
+            href="/form-check"
             className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
           >
-            <img src="formcheck.gif" alt="Start Workout" className="h-30  mb-2" />
+            <img src="formcheck.gif" alt="Form Check" className="h-30  mb-2" />
             <h3 className="text-base font-bold text-black mb-1">Form Check</h3>
             <p className="text-xs text-gray-600">AI-powered exercise analysis</p>
+          </Link>
+
+          <Link
+            href="/routine-analyzer"
+            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
+          >
+            <img src="routine.gif" alt="Routine Analyzer" className="h-30  mb-2 opacity-80" />
+            <h3 className="text-base font-bold text-black mb-1">Routine Analyzer</h3>
+            <p className="text-xs text-gray-600">Optimize your workout split</p>
           </Link>
         </div>
 
@@ -161,17 +211,45 @@ export default function DashboardPage() {
         {chatOpen && <ChatModal onClose={() => setChatOpen(false)} />}
 
         {/* Recent Activity */}
-        <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm bg-opacity-70 hover:opacity-60 ">
+        <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm bg-opacity-70 hover:opacity-90 transition">
           <h3 className="text-2xl font-bold text-black mb-6">Recent Activity</h3>
-          <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">No workouts yet</p>
-            <Link
-              href="/workout-plan"
-              className="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition"
-            >
-              Start Your First Workout
-            </Link>
-          </div>
+          {progressStats.recentWorkouts.length > 0 ? (
+            <div className="space-y-3">
+              {progressStats.recentWorkouts.map((workout, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                      <span className="text-primary-600">💪</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{workout.workoutName}</p>
+                      <p className="text-sm text-gray-500">{workout.date}</p>
+                    </div>
+                  </div>
+                  <span className="text-green-600 font-medium">Completed ✓</span>
+                </div>
+              ))}
+              <Link
+                href="/progress"
+                className="block text-center text-primary-600 hover:text-primary-700 font-medium mt-4"
+              >
+                View All Activity →
+              </Link>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 mb-4">No workouts yet</p>
+              <Link
+                href="/workout-session"
+                className="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition"
+              >
+                Start Your First Workout
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
