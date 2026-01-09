@@ -30,6 +30,11 @@ export const authOptions: NextAuthOptions = {
           throw new Error('No user found with this email');
         }
 
+        // Check if user has a password (not a Google OAuth user)
+        if (!user.password) {
+          throw new Error('This account was created with Google. Please sign in with Google instead.');
+        }
+
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password

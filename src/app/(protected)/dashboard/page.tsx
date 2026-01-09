@@ -71,7 +71,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const randomQuote = gymQuotes[Math.floor(Math.random() * gymQuotes.length)];
     setMotivationQuote(randomQuote);
-  }, []);
+  }, []); // gymQuotes is static, so it's safe to omit from dependencies
 
   // Fetch all stats
   useEffect(() => {
