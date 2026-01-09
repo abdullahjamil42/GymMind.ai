@@ -53,33 +53,30 @@ export async function GET(request: NextRequest) {
     
     // If no profile exists, create one with basic info
     if (!profile) {
-      profile = await UserProfile.create({
+      const newProfile = await UserProfile.create({
         userId: session.user.id,
         name: session.user.name || '',
         email: session.user.email || '',
       });
+      // Convert to plain object for consistent typing
+      profile = newProfile.toObject();
     }
 
-    // Ensure profile exists (TypeScript safety)
-    if (!profile) {
-      return NextResponse.json(
-        { error: 'Failed to create or retrieve profile' },
-        { status: 500 }
-      );
-    }
+    // TypeScript assertion - we know profile exists at this point
+    const userProfile = profile as any;
 
     return NextResponse.json({
       success: true,
       profile: {
-        name: profile.name,
-        email: profile.email,
-        age: profile.age,
-        height: profile.height,
-        weight: profile.weight,
-        fitnessGoal: profile.fitnessGoal,
-        experienceLevel: profile.experienceLevel,
-        location: profile.location,
-        bio: profile.bio,
+        name: userProfile.name,
+        email: userProfile.email,
+        age: userProfile.age,
+        height: userProfile.height,
+        weight: userProfile.weight,
+        fitnessGoal: userProfile.fitnessGoal,
+        experienceLevel: userProfile.experienceLevel,
+        location: userProfile.location,
+        bio: userProfile.bio,
       },
     });
 
