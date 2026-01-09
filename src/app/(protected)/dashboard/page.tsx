@@ -164,7 +164,12 @@ export default function DashboardPage() {
               GymMind<span className="text-primary-500">.ai</span>
             </h1>
             <div className="flex items-center gap-4">
-              <span className="text-gray-400 hidden sm:block">{session?.user?.name}</span>
+              <Link 
+                href="/profile"
+                className="text-gray-400 hover:text-white transition hidden sm:block"
+              >
+                {session?.user?.name}
+              </Link>
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
                 className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition"
