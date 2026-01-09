@@ -20,10 +20,13 @@ import {
   User
 } from 'lucide-react';
 import ChatModal from './ChatModal';
+import { checkProfileCompletion, getProfileCompletionMessage, type ProfileCompletionStatus } from '@/lib/utils/profileCompletion';
 
 export default function DashboardPage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [profileStatus, setProfileStatus] = useState<ProfileCompletionStatus | null>(null);
   const [motivationQuote, setMotivationQuote] = useState('');
   const [nutritionStats, setNutritionStats] = useState({
     todayCalories: 0,
@@ -119,6 +122,25 @@ export default function DashboardPage() {
               }))
           });
         }
+
+        // Fetch user profile to check completion
+        const profileRes = await fetch('/api/user/profile');
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          if (profileData.success && profileData.profile) {
+            setUserProfile(profileData.profile);
+            const status = checkProfileCompletion(profileData.profile);
+            setProfileStatus(status);
+          } else {
+            // No profile found, definitely incomplete
+            const status = checkProfileCompletion(null);
+            setProfileStatus(status);
+          }
+        } else {
+          // Error fetching profile, assume incomplete
+          const status = checkProfileCompletion(null);
+          setProfileStatus(status);
+        }
       } catch (err) {
         console.error('Error fetching stats:', err);
       } finally {
@@ -204,6 +226,41 @@ export default function DashboardPage() {
           </h2>
           <p className="text-gray-400 text-lg">Ready to crush your fitness goals today?</p>
         </div>
+
+        {/* Profile Completion Banner */}
+        {profileStatus && !profileStatus.isComplete && (
+          <div className="mb-6 bg-gradient-to-r from-amber-600/20 to-orange-600/20 border border-amber-500/30 rounded-xl p-4 backdrop-blur-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                  <User className="h-5 w-5 text-amber-400" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-white font-semibold">Complete Your Profile</h3>
+                    <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">
+                      {profileStatus.completionPercentage}%
+                    </span>
+                  </div>
+                  <p className="text-gray-300 text-sm mb-2">{getProfileCompletionMessage(profileStatus)}</p>
+                  {/* Progress bar */}
+                  <div className="w-full bg-gray-700/50 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-amber-500 to-amber-600 h-2 rounded-full transition-all duration-500" 
+                      style={{ width: `${profileStatus.completionPercentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <Link 
+                href="/profile"
+                className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+              >
+                Complete Profile
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">

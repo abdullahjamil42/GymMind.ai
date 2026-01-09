@@ -1,7 +1,6 @@
+import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Brain, Dumbbell, Utensils, Video, MessageCircle, TrendingUp, ChevronDown, LogIn, LogInIcon } from 'lucide-react';
-import { Sign } from 'crypto';
-import SignupPage from './(auth)/signup/page';
+import { ArrowRight, Brain, Dumbbell, Utensils, Video, MessageCircle, TrendingUp, ChevronDown, LogIn } from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -21,7 +20,7 @@ export default function LandingPage() {
               <LogIn className="h-6 w-6 text-gray-300 hover:text-white" />
             </Link>
             <Link href="/signup" className="btn-primary">
-                Sign Up
+              Get Started
             </Link>
           </div>
         </div>

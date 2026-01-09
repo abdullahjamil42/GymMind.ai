@@ -12,8 +12,9 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
 export interface IUser extends Document {
   email: string;
-  password: string;
+  password?: string; // Optional for OAuth users
   name: string;
+  googleId?: string; // For Google OAuth
   isOnboardingComplete: boolean;
   firstName?: string;
   lastName?: string;
@@ -44,7 +45,12 @@ const UserSchema = new Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false, // Not required for OAuth users
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows null values and creates index only for non-null values
     },
     name: {
       type: String,
