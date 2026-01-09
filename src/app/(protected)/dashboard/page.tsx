@@ -3,14 +3,44 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bot } from 'lucide-react';
 import ChatModal from './ChatModal';
 
 export default function DashboardPage() {
-    const [chatOpen, setChatOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [nutritionStats, setNutritionStats] = useState({
+    todayCalories: 0,
+    weeklyMeals: 0,
+    calorieGoal: 2200
+  });
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  // Fetch nutrition stats
+  useEffect(() => {
+    const fetchNutritionStats = async () => {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch(`/api/nutrition?date=${today}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setNutritionStats(prev => ({
+            ...prev,
+            todayCalories: data.dailyTotals?.calories || 0,
+            weeklyMeals: data.meals?.length || 0
+          }));
+        }
+      } catch (err) {
+        console.error('Error fetching nutrition stats:', err);
+      }
+    };
+
+    if (status === 'authenticated') {
+      fetchNutritionStats();
+    }
+  }, [status]);
 
   if (status === 'loading') {
     return (
@@ -53,9 +83,9 @@ export default function DashboardPage() {
         <span className="mx-2">|</span>
         <span>Current Streak: <span className="font-bold text-black">0 days</span> (Keep it going!)</span>
         <span className="mx-2">|</span>
-        <span>Calories Burned: <span className="font-bold text-black">0</span> (This week)</span>
+        <span>Calories Today: <span className="font-bold text-black">{nutritionStats.todayCalories}</span> of {nutritionStats.calorieGoal}</span>
         <span className="mx-2">|</span>
-        <span>Total Workouts: <span className="font-bold text-black">0</span> (All time)</span>
+        <span>Meals Today: <span className="font-bold text-black">{nutritionStats.weeklyMeals}</span> logged</span>
       </div> 
 
       {/* Main Content */}
