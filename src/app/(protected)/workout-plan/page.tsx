@@ -148,37 +148,36 @@ export default function WorkoutPlanPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white z-30 relative">
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading workout plan...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-primary-500 mx-auto mb-4" />
+          <p className="text-gray-400">Loading workout plan...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 relative z-0">
-      <img src="/bg.png" alt="Background Pattern" className="fixed inset-0 w-full h-full object-cover opacity-100 blur-sm pointer-events-none z-0 scale-110" />
+    <div className="min-h-screen bg-gray-900">
+      <img src="/bg.png" alt="Background" className="fixed inset-0 w-full h-full object-cover opacity-20 blur-sm pointer-events-none z-0" />
+      
       {/* Header */}
-      <header className="bg-black/60 backdrop-blur-lg border-b border-black shadow-sm z-20 relative">
-
-        <div className="max-w-4xl mx-auto px-0 py-3 ">
+      <header className="bg-black/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 flex-shrink-0">
-              <Link href="/dashboard" className="text-gray-200 hover:text-black transition">
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard" className="text-gray-400 hover:text-white transition">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <div>
                 <h1 className="text-xl font-bold text-white">AI Workout Plan</h1>
-                <p className="text-sm text-gray-200">Your personalized training program</p>
+                <p className="text-sm text-gray-400">Your personalized training program</p>
               </div>
             </div>
-            <div className="flex-1" />
             <button
               onClick={generateNewPlan}
               disabled={generating}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition disabled:opacity-50 flex-shrink-0"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition disabled:opacity-50"
             >
               {generating ? (
                 <>
@@ -196,19 +195,19 @@ export default function WorkoutPlanPage() {
         </div>
       </header>
 
-        <main className="max-w-4xl mx-auto px-0 py-8 relative z-10">
+      <main className="max-w-4xl mx-auto px-4 py-8 relative z-10">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 z-20 relative">
+          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6">
             {error}
           </div>
         )}
 
         {/* No Plan State */}
         {!workoutPlan && !generating && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center z-10 relative">
-            <Sparkles className="h-16 w-16 text-primary-600 mx-auto mb-6" />
-            <h2 className="text-2xl font-bold text-black mb-4">Generate Your AI Workout Plan</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-12 text-center">
+            <Sparkles className="h-16 w-16 text-primary-500 mx-auto mb-6" />
+            <h2 className="text-2xl font-bold text-white mb-4">Generate Your AI Workout Plan</h2>
+            <p className="text-gray-400 mb-8 max-w-md mx-auto">
               Our AI will create a personalized workout plan based on your fitness goals, experience level, and available training days.
             </p>
             <button
@@ -224,13 +223,13 @@ export default function WorkoutPlanPage() {
 
         {/* Generating State */}
         {generating && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center z-10 relative">
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-12 text-center">
             <div className="relative mx-auto w-20 h-20 mb-6">
-              <Loader2 className="h-20 w-20 animate-spin text-primary-600" />
-              <Dumbbell className="h-8 w-8 text-primary-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+              <Loader2 className="h-20 w-20 animate-spin text-primary-500" />
+              <Dumbbell className="h-8 w-8 text-primary-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
             </div>
-            <h2 className="text-2xl font-bold text-black mb-4">Creating Your Plan...</h2>
-            <p className="text-gray-600">
+            <h2 className="text-2xl font-bold text-white mb-4">Creating Your Plan...</h2>
+            <p className="text-gray-400">
               Our AI is designing a personalized workout program just for you.
             </p>
           </div>
@@ -238,19 +237,19 @@ export default function WorkoutPlanPage() {
 
         {/* Workout Plan Display */}
         {workoutPlan && !generating && (
-          <div className="space-y-6 z-10 relative">
+          <div className="space-y-6">
             {/* Plan Overview */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 z-10 relative">
+            <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-black">Your Weekly Plan</h2>
-                  <p className="text-sm text-gray-600">
+                  <h2 className="text-lg font-bold text-white">Your Weekly Plan</h2>
+                  <p className="text-sm text-gray-400">
                     {workoutPlan.weeklyPlan.length} training days per week
                   </p>
                 </div>
                 <button
                   onClick={() => setShowExplanation(!showExplanation)}
-                  className="flex items-center gap-1 text-sm text-primary-600 hover:text-primary-700"
+                  className="flex items-center gap-1 text-sm text-primary-500 hover:text-primary-400"
                 >
                   <Info className="h-4 w-4" />
                   {showExplanation ? 'Hide' : 'Why this plan?'}
@@ -258,13 +257,13 @@ export default function WorkoutPlanPage() {
               </div>
               
               {showExplanation && workoutPlan.explanation && (
-                <div className="bg-primary-50 border border-primary-100 rounded-lg p-4 mb-4 z-20 relative">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{workoutPlan.explanation}</p>
+                <div className="bg-primary-500/10 border border-primary-500/30 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-gray-300 whitespace-pre-wrap">{workoutPlan.explanation}</p>
                 </div>
               )}
 
               {/* Weekly Overview Grid */}
-              <div className="grid grid-cols-7 gap-2 z-10 relative">
+              <div className="grid grid-cols-7 gap-2">
                 {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
                   const workoutDay = workoutPlan.weeklyPlan.find(d => d.day === day);
                   return (
@@ -273,13 +272,13 @@ export default function WorkoutPlanPage() {
                       onClick={() => workoutDay && setExpandedDay(expandedDay === day ? null : day)}
                       className={`p-2 rounded-lg text-center transition ${
                         workoutDay 
-                          ? 'bg-primary-100 hover:bg-primary-200 cursor-pointer' 
-                          : 'bg-gray-100 text-gray-400'
+                          ? 'bg-primary-500/20 hover:bg-primary-500/30 cursor-pointer border border-primary-500/30' 
+                          : 'bg-gray-700/50 text-gray-500 border border-gray-700'
                       } ${expandedDay === day ? 'ring-2 ring-primary-500' : ''}`}
                     >
-                      <div className="text-xs font-medium">{DAY_LABELS[day].slice(0, 3)}</div>
+                      <div className="text-xs font-medium text-gray-300">{DAY_LABELS[day].slice(0, 3)}</div>
                       {workoutDay && (
-                        <Dumbbell className="h-4 w-4 mx-auto mt-1 text-primary-600" />
+                        <Dumbbell className="h-4 w-4 mx-auto mt-1 text-primary-500" />
                       )}
                     </button>
                   );
@@ -289,22 +288,22 @@ export default function WorkoutPlanPage() {
 
             {/* Workout Days */}
             {workoutPlan.weeklyPlan.map((day) => (
-              <div key={day.day} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden z-10 relative">
+              <div key={day.day} className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 overflow-hidden">
                 <button
                   onClick={() => setExpandedDay(expandedDay === day.day ? null : day.day)}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition"
+                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-700/50 transition"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center">
-                      <Dumbbell className="h-6 w-6 text-primary-600" />
+                    <div className="w-12 h-12 rounded-full bg-primary-500/20 flex items-center justify-center">
+                      <Dumbbell className="h-6 w-6 text-primary-500" />
                     </div>
                     <div className="text-left">
-                      <h3 className="font-bold text-black">{DAY_LABELS[day.day]}</h3>
-                      <p className="text-sm text-gray-600">{day.name}</p>
+                      <h3 className="font-bold text-white">{DAY_LABELS[day.day]}</h3>
+                      <p className="text-sm text-gray-400">{day.name}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <div className="flex items-center gap-1 text-sm text-gray-400">
                       <Clock className="h-4 w-4" />
                       {day.estimatedDuration} min
                     </div>
@@ -317,13 +316,13 @@ export default function WorkoutPlanPage() {
                 </button>
 
                 {expandedDay === day.day && (
-                  <div className="px-6 pb-6 border-t border-gray-100 z-10 relative">
+                  <div className="px-6 pb-6 border-t border-gray-700">
                     {/* Focus Areas */}
                     <div className="flex flex-wrap gap-2 py-4">
                       {day.focus.map((area) => (
                         <span
                           key={area}
-                          className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full capitalize"
+                          className="px-3 py-1 bg-gray-700/50 text-gray-300 text-sm rounded-full capitalize"
                         >
                           {area}
                         </span>
@@ -335,15 +334,15 @@ export default function WorkoutPlanPage() {
                       {day.exercises.map((exercise, idx) => (
                         <div
                           key={idx}
-                          className="bg-gray-50 rounded-xl p-4 z-10 relative"
+                          className="bg-gray-900/50 rounded-xl p-4 border border-gray-700"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-primary-600">#{idx + 1}</span>
-                                <h4 className="font-semibold text-black">{exercise.name}</h4>
+                                <span className="text-sm font-medium text-primary-500">#{idx + 1}</span>
+                                <h4 className="font-semibold text-white">{exercise.name}</h4>
                               </div>
-                              <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600">
+                              <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-400">
                                 <span>{exercise.sets} sets × {exercise.reps} reps</span>
                                 <span>{exercise.restSeconds}s rest</span>
                                 <span className="capitalize">{exercise.equipment}</span>
@@ -354,7 +353,7 @@ export default function WorkoutPlanPage() {
                             </div>
                             <button
                               onClick={() => explainExercise(exercise.name)}
-                              className="ml-4 p-2 text-gray-400 hover:text-primary-600 transition"
+                              className="ml-4 p-2 text-gray-500 hover:text-primary-500 transition"
                               title="Get AI explanation"
                             >
                               <Info className="h-5 w-5" />
@@ -372,15 +371,15 @@ export default function WorkoutPlanPage() {
 
         {/* Exercise Explanation Modal */}
         {(exerciseExplanation || loadingExplanation) && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden z-50 relative">
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-black">
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-800 rounded-xl max-w-lg w-full max-h-[80vh] overflow-hidden border border-gray-700">
+              <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+                <h3 className="text-lg font-bold text-white">
                   {loadingExplanation ? 'Loading...' : exerciseExplanation?.name}
                 </h3>
                 <button
                   onClick={() => setExerciseExplanation(null)}
-                  className="text-gray-400 hover:text-black transition"
+                  className="text-gray-400 hover:text-white transition"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -388,10 +387,10 @@ export default function WorkoutPlanPage() {
               <div className="p-6 overflow-y-auto max-h-[60vh]">
                 {loadingExplanation ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+                    <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
                   </div>
                 ) : (
-                  <p className="text-gray-700 whitespace-pre-wrap">{exerciseExplanation?.text}</p>
+                  <p className="text-gray-300 whitespace-pre-wrap">{exerciseExplanation?.text}</p>
                 )}
               </div>
             </div>

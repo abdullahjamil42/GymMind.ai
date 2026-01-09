@@ -4,13 +4,26 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Bot } from 'lucide-react';
+import { 
+  Bot, 
+  Dumbbell, 
+  Calendar, 
+  TrendingUp, 
+  Utensils, 
+  Video, 
+  BarChart3,
+  Flame,
+  Activity,
+  Clock,
+  LogOut,
+  Loader2
+} from 'lucide-react';
 import ChatModal from './ChatModal';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 export default function DashboardPage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [motivationQuote, setMotivationQuote] = useState('');
   const [nutritionStats, setNutritionStats] = useState({
     todayCalories: 0,
     weeklyMeals: 0,
@@ -20,10 +33,41 @@ export default function DashboardPage() {
     workoutsThisWeek: 0,
     workoutsLastWeek: 0,
     currentStreak: 0,
+    totalDuration: 0,
     recentWorkouts: [] as Array<{ date: string; workoutName: string }>
   });
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  // Gym motivation quotes
+  const gymQuotes = [
+    "The only bad workout is the one that didn't happen.",
+    "Your body can do it. It's your mind you have to convince.",
+    "Champions train, losers complain.",
+    "Success isn't given. It's earned in the gym.",
+    "The pain you feel today will be the strength you feel tomorrow.",
+    "Don't wish for it, work for it.",
+    "Sweat is just fat crying.",
+    "Train like a beast, look like a beauty.",
+    "The gym is your therapy session.",
+    "Stronger than yesterday, weaker than tomorrow.",
+    "Results happen over time, not overnight.",
+    "Discipline is doing what needs to be done, even when you don't want to do it.",
+    "Your only competition is who you were yesterday.",
+    "Great things never come from comfort zones.",
+    "The hardest lift of all is lifting your butt off the couch.",
+    "Fitness is not about being better than someone else, it's about being better than you used to be.",
+    "Train hard, stay humble.",
+    "Push yourself because no one else is going to do it for you.",
+    "The body achieves what the mind believes.",
+    "Every workout is progress, no matter how small."
+  ];
+
+  // Set random quote on component mount
+  useEffect(() => {
+    const randomQuote = gymQuotes[Math.floor(Math.random() * gymQuotes.length)];
+    setMotivationQuote(randomQuote);
+  }, []);
 
   // Fetch all stats
   useEffect(() => {
@@ -54,7 +98,7 @@ export default function DashboardPage() {
           // Calculate this week's workouts
           const now = new Date();
           const weekStart = new Date(now);
-          weekStart.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
+          weekStart.setDate(now.getDate() - now.getDay());
           weekStart.setHours(0, 0, 0, 0);
           
           const thisWeekWorkouts = workoutEntries.filter((e: any) => 
@@ -65,6 +109,7 @@ export default function DashboardPage() {
             workoutsThisWeek: thisWeekWorkouts.length,
             workoutsLastWeek: 0,
             currentStreak: progressData.stats?.currentStreak || 0,
+            totalDuration: progressData.stats?.totalDuration || 0,
             recentWorkouts: workoutEntries
               .slice(0, 5)
               .map((e: any) => ({
@@ -88,160 +133,168 @@ export default function DashboardPage() {
   }, [status]);
 
   if (status === 'loading' || loading) {
-    return <LoadingSpinner fullScreen text="Loading dashboard..." />
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <p className="text-gray-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
+  const quickActions = [
+    { href: '/workout-session', icon: Dumbbell, title: 'Start Workout', description: 'Begin your training session', primary: true },
+    { href: '/workout-plan', icon: Calendar, title: 'View Plan', description: 'Check your workout schedule' },
+    { href: '/progress', icon: TrendingUp, title: 'Progress', description: 'Track your improvements' },
+    { href: '/nutrition', icon: Utensils, title: 'Nutrition', description: 'Log meals and track macros' },
+    { href: '/form-check', icon: Video, title: 'Form Check', description: 'AI-powered exercise analysis' },
+    { href: '/routine-analyzer', icon: BarChart3, title: 'Routine Analyzer', description: 'Optimize your workout split' }
+  ];
+
   return (
-    <div className="min-h-screen bg-white relative">
-      <img src="/bg.png" alt="Background Pattern" className="fixed inset-0 w-full h-full object-cover opacity-100 blur-sm pointer-events-none z-0 scale-110" />
-      {/* Navigation Header */}
-      <header className="bg-black/60 sticky backdrop-blur-lg border-b border-black shadow-sm z-20  ">
-        <div className="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4">
-          <div className="flex items-center h-16 w-full">
-            <div className="flex items-center flex-shrink-0">
-              {/*<img src="/logo1.png" alt="GymMind.ai Logo" className="h-16 mr-2 z-30 relative" />*/}
-              <h1 className="text-2xl font-bold text-white z-30 relative ">
-                GymMind<span className="text-primary-600">.ai</span>
-              </h1>
-            </div>
-            <div className="flex-1" />
-            <div className="flex items-center space-x-4 z-30 relative">
-              <span className="text-gray-200">{session?.user?.name}</span>
+    <div className="min-h-screen bg-gray-900">
+      <img src="/bg.png" alt="Background" className="fixed inset-0 w-full h-full object-cover opacity-20 blur-sm pointer-events-none z-0" />
+
+      {/* Header */}
+      <header className="bg-black/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-white">
+              GymMind<span className="text-primary-500">.ai</span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <span className="text-gray-400 hidden sm:block">{session?.user?.name}</span>
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
-                className="px-4 py-2  hover:bg-gray-800 text-white rounded-lg transition"
+                className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition"
               >
-                Sign Out
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign Out</span>
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Slim Stats Bar Below Nav */}
-      <div className="w-full bg-red-950 bg-opacity-30    z-20 relative flex items-center justify-center px-2 py-2 text-sm font-medium text-white/80 space-x-6 whitespace-nowrap overflow-x-auto">
-        <span>Workouts This Week:  <span className="font-bold text-black  ">{progressStats.workoutsThisWeek}</span> {progressStats.workoutsLastWeek > 0 && `(+${progressStats.workoutsThisWeek - progressStats.workoutsLastWeek} from last week)`}</span>
-        <span className="mx-2">|</span>
-        <span>Current Streak: <span className="font-bold text-black">{progressStats.currentStreak} days</span> {progressStats.currentStreak > 0 ? '🔥' : '(Start today!)'}</span>
-        <span className="mx-2">|</span>
-        <span>Calories Today: <span className="font-bold text-black">{nutritionStats.todayCalories}</span> of {nutritionStats.calorieGoal}</span>
-        <span className="mx-2">|</span>
-        <span>Meals Today: <span className="font-bold text-black">{nutritionStats.weeklyMeals}</span> logged</span>
-      </div> 
+      {/* Motivation Quote Bar */}
+      <div className="bg-gray-800/50 border-b border-gray-800 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="text-center">
+            <p className="text-gray-300 text-lg font-medium italic">
+              "{motivationQuote}"
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-2 sm:px-3 lg:px-4 py-8 relative z-20">
+      <main className="max-w-7xl mx-auto px-4 py-8 relative z-10">
         {/* Welcome Section */}
-        <div className="mb-12">
-          <h2 className="text-4xl font-bold text-white mb-2">
+        <div className="mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
             Welcome back, {session?.user?.name?.split(' ')[0] || 'there'}!
           </h2>
-          <p className="text-gray-400 text-lg">
-            Ready to crush your fitness goals today?
-          </p>
+          <p className="text-gray-400 text-lg">Ready to crush your fitness goals today?</p>
         </div>
 
-        {/* Quick Actions - Single Row, No AI Coach */}
-        <div className="flex flex-row gap-4 mb-12 w-full justify-between opacity-70">
-          <Link
-            href="/workout-session"
-            className="bg-white rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.35)] hover:ring-2 hover:ring-primary-400 hover:opacity-60"
-          >
-            <img src="start.gif" alt="Start Workout" className="h-30  mb-2" />
-            <h3 className="text-base font-bold text-black mb-1">Start Workout</h3>
-            <p className="text-xs text-red-950">Begin your training session</p>
-          </Link>
-
-          <Link
-            href="/workout-plan"
-            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
-          >
-            <img src="plan.gif" alt="Start Workout" className="h-30  mb-2" />
-            <h3 className="text-base font-bold text-black mb-1">View Plan</h3>
-            <p className="text-xs text-gray-600">Check your workout schedule</p>
-          </Link>
-
-          <Link
-            href="/progress"
-            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
-          >
-            <img src="progress.gif" alt="Start Workout" className="h-40  mb-2" />
-            <h3 className="text-base font-bold text-black mb-1">Progress</h3>
-            <p className="text-xs text-gray-600">Track your improvements</p>
-          </Link>
-
-          <Link
-            href="/nutrition"
-            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
-          >
-            <img src="nutrition.gif" alt="Start Workout" className="h-30  mb-2" />
-            <h3 className="text-base font-bold text-black mb-1">Nutrition</h3>
-            <p className="text-xs text-gray-600">Log meals and track macros</p>
-          </Link>
-
-          <Link
-            href="/form-check"
-            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
-          >
-            <img src="formcheck.gif" alt="Form Check" className="h-30  mb-2" />
-            <h3 className="text-base font-bold text-black mb-1">Form Check</h3>
-            <p className="text-xs text-gray-600">AI-powered exercise analysis</p>
-          </Link>
-
-          <Link
-            href="/routine-analyzer"
-            className="bg-white border border-gray-200 rounded-lg px-6 py-4 flex-1 min-w-0 flex flex-col items-center transition group hover:shadow-[0_0_40px_12px_rgba(239,68,68,0.25)] hover:ring-2 hover:ring-primary-200 hover:opacity-60"
-          >
-            <img src="routine.gif" alt="Routine Analyzer" className="h-30  mb-2 opacity-80" />
-            <h3 className="text-base font-bold text-black mb-1">Routine Analyzer</h3>
-            <p className="text-xs text-gray-600">Optimize your workout split</p>
-          </Link>
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          {quickActions.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className={`group relative overflow-hidden rounded-xl p-4 transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+                action.primary 
+                  ? 'bg-gradient-to-br from-primary-600 to-primary-700 hover:shadow-primary-500/25' 
+                  : 'bg-gray-800/60 backdrop-blur-sm border border-gray-700 hover:border-gray-600 hover:bg-gray-800/80'
+              }`}
+            >
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${
+                action.primary ? 'bg-white/20' : 'bg-gray-700/50'
+              }`}>
+                <action.icon className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="font-semibold text-white mb-1">{action.title}</h3>
+              <p className={`text-xs ${action.primary ? 'text-white/70' : 'text-gray-400'}`}>
+                {action.description}
+              </p>
+            </Link>
+          ))}
         </div>
 
-        {/* AI Coach Floating Button */}
-        <button
-          onClick={() => setChatOpen(true)}
-          className="fixed bottom-8 right-8 z-50 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg p-5 flex items-center justify-center transition"
-          title="AI Coach"
-        >
-          <span className="sr-only">AI Coach</span>
-          <Bot className="w-8 h-8" />
-        </button>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+            <div className="flex items-center gap-2 mb-2">
+              <Dumbbell className="h-5 w-5 text-primary-500" />
+              <span className="text-sm text-gray-400">Workouts</span>
+            </div>
+            <p className="text-3xl font-bold text-white">{progressStats.workoutsThisWeek}</p>
+            <p className="text-xs text-gray-500">this week</p>
+          </div>
 
-        {chatOpen && <ChatModal onClose={() => setChatOpen(false)} />}
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+            <div className="flex items-center gap-2 mb-2">
+              <Flame className="h-5 w-5 text-orange-500" />
+              <span className="text-sm text-gray-400">Streak</span>
+            </div>
+            <p className="text-3xl font-bold text-white">{progressStats.currentStreak}</p>
+            <p className="text-xs text-gray-500">days in a row</p>
+          </div>
+
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="h-5 w-5 text-blue-500" />
+              <span className="text-sm text-gray-400">Time</span>
+            </div>
+            <p className="text-3xl font-bold text-white">{Math.round(progressStats.totalDuration / 60) || 0}h</p>
+            <p className="text-xs text-gray-500">total training</p>
+          </div>
+
+          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="h-5 w-5 text-green-500" />
+              <span className="text-sm text-gray-400">Calories</span>
+            </div>
+            <p className="text-3xl font-bold text-white">{nutritionStats.todayCalories}</p>
+            <p className="text-xs text-gray-500">consumed today</p>
+          </div>
+        </div>
 
         {/* Recent Activity */}
-        <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm bg-opacity-70 hover:opacity-90 transition">
-          <h3 className="text-2xl font-bold text-black mb-6">Recent Activity</h3>
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
+          <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
           {progressStats.recentWorkouts.length > 0 ? (
             <div className="space-y-3">
               {progressStats.recentWorkouts.map((workout, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg border border-gray-700"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                      <span className="text-primary-600">💪</span>
+                    <div className="w-10 h-10 bg-primary-500/20 rounded-full flex items-center justify-center">
+                      <Dumbbell className="h-5 w-5 text-primary-500" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{workout.workoutName}</p>
-                      <p className="text-sm text-gray-500">{workout.date}</p>
+                      <p className="font-medium text-white">{workout.workoutName}</p>
+                      <p className="text-sm text-gray-400">{workout.date}</p>
                     </div>
                   </div>
-                  <span className="text-green-600 font-medium">Completed ✓</span>
+                  <span className="text-green-500 text-sm font-medium">Completed ✓</span>
                 </div>
               ))}
               <Link
                 href="/progress"
-                className="block text-center text-primary-600 hover:text-primary-700 font-medium mt-4"
+                className="block text-center text-primary-500 hover:text-primary-400 font-medium mt-4 transition"
               >
                 View All Activity →
               </Link>
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600 mb-4">No workouts yet</p>
+              <Dumbbell className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400 mb-4">No workouts yet</p>
               <Link
                 href="/workout-session"
                 className="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition"
@@ -251,7 +304,18 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
-      </div>
+      </main>
+
+      {/* AI Coach Floating Button */}
+      <button
+        onClick={() => setChatOpen(true)}
+        className="fixed bottom-6 right-6 z-50 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg shadow-primary-500/25 p-4 flex items-center justify-center transition hover:scale-110"
+        title="AI Coach"
+      >
+        <Bot className="w-6 h-6" />
+      </button>
+
+      {chatOpen && <ChatModal onClose={() => setChatOpen(false)} />}
     </div>
   );
 }
