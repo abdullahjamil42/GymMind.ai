@@ -14,6 +14,31 @@ import {
   MessageCircle
 } from 'lucide-react';
 
+// Add scrollbar styles
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    .chat-scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+    .chat-scrollbar::-webkit-scrollbar-track {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+    .chat-scrollbar::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 4px;
+    }
+    .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+  `;
+  if (!document.querySelector('#chat-scrollbar-styles')) {
+    style.id = 'chat-scrollbar-styles';
+    document.head.appendChild(style);
+  }
+}
+
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -206,7 +231,10 @@ export default function ChatPage() {
       </header>
 
       {/* Messages Area */}
-      <main className="flex-1 overflow-y-auto relative z-10">
+      <main className="flex-1 overflow-y-auto relative z-10 chat-scrollbar" style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#4b5563 #1f2937'
+      }}>
         <div className="max-w-4xl mx-auto px-4 py-6">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">

@@ -1,7 +1,41 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Send, Loader2, Trash2, Bot, User, Sparkles, MessageCircle, X } from "lucide-react";
+import {
+  Send,
+  Loader2,
+  Trash2,
+  Bot,
+  User,
+  Sparkles,
+  MessageCircle,
+  X,
+} from "lucide-react";
+
+/* ---------- Scrollbar Styles ---------- */
+if (typeof document !== "undefined") {
+  if (!document.getElementById("chat-scrollbar-styles")) {
+    const style = document.createElement("style");
+    style.id = "chat-scrollbar-styles";
+    style.textContent = `
+      .chat-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .chat-scrollbar::-webkit-scrollbar-track {
+        background: #1f2937;
+      }
+      .chat-scrollbar::-webkit-scrollbar-thumb {
+        background: #4b5563;
+        border-radius: 4px;
+      }
+      .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6b7280;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
 interface ChatMessage {
   id: string;
@@ -17,8 +51,17 @@ export default function ChatModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  /* ---------- Lock background scroll ---------- */
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -27,19 +70,15 @@ export default function ChatModal({ onClose }: { onClose: () => void }) {
   }, [status]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, [messages]);
 
   const fetchChatHistory = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/chat");
-      const data = await response.json();
-      if (data.success && data.messages) {
+      const res = await fetch("/api/chat");
+      const data = await res.json();
+      if (data.success) {
         setMessages(
           data.messages.map((m: any) => ({
             id: m._id,
@@ -50,7 +89,7 @@ export default function ChatModal({ onClose }: { onClose: () => void }) {
         );
       }
     } catch (err) {
-      console.error("Error fetching chat history:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -58,48 +97,39 @@ export default function ChatModal({ onClose }: { onClose: () => void }) {
 
   const sendMessage = async () => {
     if (!inputValue.trim() || sending) return;
-    const userMessage = inputValue.trim();
+
+    const text = inputValue.trim();
     setInputValue("");
-    setError("");
     setSending(true);
-    const tempUserMessage: ChatMessage = {
+    setError("");
+
+    const temp: ChatMessage = {
       id: `temp-${Date.now()}`,
       role: "user",
-      content: userMessage,
+      content: text,
       timestamp: new Date().toISOString(),
     };
-    setMessages((prev) => [...prev, tempUserMessage]);
+
+    setMessages((prev) => [...prev, temp]);
+
     try {
-      const response = await fetch("/api/chat", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage }),
+        body: JSON.stringify({ message: text }),
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to send message");
-      }
-      setMessages((prev) => {
-        const filtered = prev.filter((m) => m.id !== tempUserMessage.id);
-        return [
-          ...filtered,
-          {
-            id: data.userMessage.id,
-            role: "user",
-            content: data.userMessage.content,
-            timestamp: data.userMessage.timestamp,
-          },
-          {
-            id: data.assistantMessage.id,
-            role: "assistant",
-            content: data.assistantMessage.content,
-            timestamp: data.assistantMessage.timestamp,
-          },
-        ];
-      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setMessages((prev) => [
+        ...prev.filter((m) => m.id !== temp.id),
+        data.userMessage,
+        data.assistantMessage,
+      ]);
     } catch (err: any) {
       setError(err.message || "Failed to send message");
-      setMessages((prev) => prev.filter((m) => m.id !== tempUserMessage.id));
+      setMessages((prev) => prev.filter((m) => m.id !== temp.id));
     } finally {
       setSending(false);
       inputRef.current?.focus();
@@ -107,16 +137,9 @@ export default function ChatModal({ onClose }: { onClose: () => void }) {
   };
 
   const clearHistory = async () => {
-    if (!confirm("Are you sure you want to clear all chat history?")) return;
-    try {
-      const response = await fetch("/api/chat", { method: "DELETE" });
-      const data = await response.json();
-      if (data.success) {
-        setMessages([]);
-      }
-    } catch (err) {
-      console.error("Error clearing chat:", err);
-    }
+    if (!confirm("Clear all chat history?")) return;
+    await fetch("/api/chat", { method: "DELETE" });
+    setMessages([]);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -126,21 +149,10 @@ export default function ChatModal({ onClose }: { onClose: () => void }) {
     }
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  if (status === "loading" || loading) {
+  if (loading || status === "loading") {
     return (
-      <div
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-lg"
-        onClick={onClose}
-      >
-        <div className="text-center" onClick={e => e.stopPropagation()}>
-          <Loader2 className="h-8 w-8 animate-spin text-primary-500 mx-auto mb-4" />
-          <p className="text-gray-400">Loading chat...</p>
-        </div>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
       </div>
     );
   }
@@ -150,161 +162,106 @@ export default function ChatModal({ onClose }: { onClose: () => void }) {
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-lg"
       onClick={onClose}
     >
+      {/* ---------- MODAL ---------- */}
       <div
-        className="bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 my-8 flex flex-col relative border border-gray-800"
-        onClick={e => e.stopPropagation()}
+        className="
+          bg-gray-900
+          rounded-2xl
+          shadow-2xl
+          w-full max-w-2xl
+          h-[85vh] max-h-[85vh]
+          flex flex-col
+          relative
+          border border-gray-800
+        "
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition z-10"
-          title="Close Chat"
-        >
-          <X className="h-6 w-6" />
-        </button>
+        {/* Close */}
+        
 
         {/* Header */}
-        <header className="bg-black/80 backdrop-blur-md border-b border-gray-800 rounded-t-2xl sticky top-0 z-30">
-          <div className="px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
-                <Bot className="h-5 w-5 text-white" />
+        <header className="px-6 py-4 border-b border-gray-800 bg-black/80 sticky top-0 z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center">
+                <Bot className="text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-white">GymMind AI Coach</h1>
-                <p className="text-xs text-gray-400">Your personal fitness assistant</p>
+                <h1 className="text-white font-bold">GymMind AI</h1>
+                <p className="text-xs text-gray-400">AI Fitness Coach</p>
               </div>
             </div>
             {messages.length > 0 && (
-              <button
-                onClick={clearHistory}
-                className="p-2 text-gray-400 hover:text-red-400 transition"
-                title="Clear chat history"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-4">
+                <button onClick={clearHistory} className="text-gray-400 hover:text-red-400">
+                  <Trash2 />
+                </button>
+                <button
+                  onClick={onClose}
+                  className="text-gray-400 hover:text-white z-20"
+                >
+                  <X />
+                </button>
+              </div>
             )}
           </div>
         </header>
 
-        {/* Messages Area */}
-        <main className="flex-1 overflow-y-auto relative z-10 px-6 py-6">
+        {/* Messages */}
+        <main className="flex-1 overflow-y-auto chat-scrollbar px-6 py-6">
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center mb-6">
-                <Sparkles className="h-10 w-10 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-3">Welcome to GymMind AI!</h2>
-              <p className="text-gray-400 max-w-md mb-8">
-                I'm your personal AI gym coach. Ask me anything about workouts, nutrition, form tips, or fitness advice!
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
-                {[
-                  "What should I eat before a workout?",
-                  "How do I improve my squat form?",
-                  "Create a warm-up routine for me",
-                  "How many calories should I eat?"
-                ].map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setInputValue(suggestion)}
-                    className="p-3 bg-gray-800/60 hover:bg-gray-800 border border-gray-700 rounded-xl text-sm text-gray-300 hover:text-white transition text-left"
-                  >
-                    <MessageCircle className="h-4 w-4 inline mr-2 text-primary-500" />
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <Sparkles className="h-10 w-10 text-primary-500 mb-4" />
+              <p className="text-gray-400">Ask me anything about fitness 💪</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {messages.map((message) => (
+              {messages.map((m) => (
                 <div
-                  key={message.id}
-                  className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  key={m.id}
+                  className={`flex gap-3 ${
+                    m.role === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
-                  {message.role === "assistant" && (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0">
-                      <Bot className="h-4 w-4 text-white" />
-                    </div>
-                  )}
+                  {m.role === "assistant" && <Bot className="text-primary-500" />}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      message.role === "user"
+                    className={`px-4 py-3 rounded-xl max-w-[75%] ${
+                      m.role === "user"
                         ? "bg-primary-600 text-white"
                         : "bg-gray-800 text-gray-100"
                     }`}
                   >
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
-                    <p className={`text-xs mt-2 ${message.role === "user" ? "text-primary-200" : "text-gray-500"}`}>
-                      {formatTimestamp(message.timestamp)}
-                    </p>
+                    <p className="text-sm whitespace-pre-wrap">{m.content}</p>
                   </div>
-                  {message.role === "user" && (
-                    <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
-                      <User className="h-4 w-4 text-gray-300" />
-                    </div>
-                  )}
+                  {m.role === "user" && <User className="text-gray-400" />}
                 </div>
               ))}
-              {sending && (
-                <div className="flex gap-3 justify-start">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0">
-                    <Bot className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="bg-gray-800 rounded-2xl px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
-                      <span className="text-sm text-gray-400">Thinking...</span>
-                    </div>
-                  </div>
-                </div>
-              )}
               <div ref={messagesEndRef} />
             </div>
           )}
         </main>
 
-        {/* Error Display */}
-        {error && (
-          <div className="px-6 pb-2 relative z-20">
-            <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-2 rounded-lg text-sm">
-              {error}
-            </div>
-          </div>
-        )}
-
-        {/* Input Area */}
-        <footer className="bg-black/80 backdrop-blur-md border-t border-gray-800 rounded-b-2xl sticky bottom-0 z-30 px-6 py-4">
-          <div className="flex items-end gap-3">
-            <div className="flex-1 relative">
-              <textarea
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Ask me anything about fitness..."
-                rows={1}
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                style={{ minHeight: "48px", maxHeight: "120px" }}
-                disabled={sending}
-              />
-            </div>
+        {/* Input */}
+        <footer className="border-t border-gray-800 bg-black/80 px-6 py-4 sticky bottom-0">
+          <div className="flex gap-3">
+            <textarea
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask something..."
+              rows={1}
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white resize-none"
+              disabled={sending}
+            />
             <button
               onClick={sendMessage}
               disabled={!inputValue.trim() || sending}
-              className="p-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+              className="bg-primary-600 text-white px-4 rounded-xl"
             >
-              {sending ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                <Send className="h-5 w-5" />
-              )}
+              {sending ? <Loader2 className="animate-spin" /> : <Send />}
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2 text-center">
-            GymMind AI provides fitness guidance only. For medical advice, consult a healthcare professional.
-          </p>
         </footer>
       </div>
     </div>

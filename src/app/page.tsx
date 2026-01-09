@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { ArrowRight, Brain, Dumbbell, Utensils, Video, MessageCircle, TrendingUp, ChevronDown } from 'lucide-react';
+import { ArrowRight, Brain, Dumbbell, Utensils, Video, MessageCircle, TrendingUp, ChevronDown, LogIn, LogInIcon } from 'lucide-react';
+import { Sign } from 'crypto';
+import SignupPage from './(auth)/signup/page';
 
 export default function LandingPage() {
   return (
@@ -12,11 +14,14 @@ export default function LandingPage() {
             <span className="font-heading text-2xl font-bold">GymMind.ai</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="/login" className="hidden sm:block text-gray-300 hover:text-white transition-colors">
               Log in
             </Link>
+            <Link href="/login" className="sm:hidden">
+              <LogIn className="h-6 w-6 text-gray-300 hover:text-white" />
+            </Link>
             <Link href="/signup" className="btn-primary">
-              Get Started
+                Sign Up
             </Link>
           </div>
         </div>
