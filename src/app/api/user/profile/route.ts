@@ -60,6 +60,14 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Ensure profile exists (TypeScript safety)
+    if (!profile) {
+      return NextResponse.json(
+        { error: 'Failed to create or retrieve profile' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       profile: {
@@ -76,7 +84,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Profile fetch error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch profile' },
       { status: 500 }
@@ -186,7 +193,6 @@ export async function PUT(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Profile update error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to update profile' },
       { status: 500 }

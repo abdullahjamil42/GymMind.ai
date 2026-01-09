@@ -16,7 +16,8 @@ import {
   Activity,
   Clock,
   LogOut,
-  Loader2
+  Loader2,
+  User
 } from 'lucide-react';
 import ChatModal from './ChatModal';
 
@@ -149,7 +150,7 @@ export default function DashboardPage() {
     { href: '/progress', icon: TrendingUp, title: 'Progress', description: 'Track your improvements' },
     { href: '/nutrition', icon: Utensils, title: 'Nutrition', description: 'Log meals and track macros' },
     { href: '/form-check', icon: Video, title: 'Form Check', description: 'AI-powered exercise analysis' },
-    { href: '/routine-analyzer', icon: BarChart3, title: 'Routine Analyzer', description: 'Optimize your workout split' }
+    { href: '/profile', icon: User, title: 'Edit Profile', description: 'Update your personal info' }
   ];
 
   return (
@@ -166,9 +167,10 @@ export default function DashboardPage() {
             <div className="flex items-center gap-4">
               <Link 
                 href="/profile"
-                className="text-gray-400 hover:text-white transition hidden sm:block"
+                className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition"
               >
-                {session?.user?.name}
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">{session?.user?.name}</span>
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
