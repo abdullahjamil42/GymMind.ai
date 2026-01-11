@@ -3,6 +3,7 @@ import { urbanist } from '@/fonts/urbanist';
 import { Inter, Poppins } from 'next/font/google';
 import '@/styles/globals.css';
 import { AuthProvider } from '@/lib/auth/AuthProvider';
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -71,6 +72,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${urbanist.variable} font-sans`}>
         <AuthProvider>{children}</AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
